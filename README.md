@@ -37,3 +37,8 @@ Created: gen/jhipster-sample-app-8 with Spring 1.5.6.RELEASE and Angular 1.6.5
 Created: gen/jhipster-sample-app-9 with Spring 1.5.7.RELEASE and Angular 1.6.6
 Done.
 ```
+
+### TODOs:  
+ - [ ] Smartify the SemVer handling (for now it's just the 10 last)
+ - [ ] Add more diversification (not only Spring boot parent & Angular, but all deps)
+ - [ ] Buy a bike
