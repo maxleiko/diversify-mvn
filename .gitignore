@@ -2,3 +2,4 @@ node_modules
 gen/
 jhipster-sample-app/
 java-websocket/
+result.json
