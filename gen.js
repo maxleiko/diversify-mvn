@@ -1,4 +1,5 @@
 const fs = require('fs-extra');
+const path = require('path');
 const chalk = require('chalk');
 const commander = require('commander');
 const pkgJson = require('./package.json');
@@ -105,7 +106,7 @@ fs.emptyDir(program.output)
                 clones,
                 (clone) => copyClone(pom, clone.deps, PROJECT_PATH, clone.path)
                   .then(() => execClone(program.cmd, clone))
-                  .then((clone) => updateResult('result.json', clone))
+                  .then((clone) => updateResult(path.join(program.output, 'result.json'), clone))
                   .then((clone) => {
                     if (clone.isValid) {
                       console.log(` ${chalk.green('✔')} valid configuration ${chalk.blue(clone.path)}`);

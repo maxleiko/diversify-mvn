@@ -2,7 +2,7 @@
 This script will create clones of the given Maven project, by changing the dependencies versions using a range of the latest available versions based on [Maven Central](http://search.maven.org).
 
 The generated *diversified* projects will be copied in `gen/`  
-The complete result of the diversification will be dumped in `result.json`
+The complete result of the diversification will be dumped in `gen/result.json`
 
 ### Usage
 > You need Node.js 7+ in order to use this script
