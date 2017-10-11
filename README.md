@@ -21,3 +21,16 @@ Finally, start the script with the path to the Maven project as param:
 ```sh
 node gen.js jhipster-sample-app
 ```
+
+Once you have generated all the clones you get a `gen/result.json` file.  
+This file can be used afterwards with `compose.js` in order to create variants of your app using multiple group of dependencies:
+
+> :warning: Move the first `gen/result.json` to another directory as all the scripts will delete `gen/` when started  
+
+Then use the `compose.js` script:
+```sh
+mv gen/result.json jhipster-sample-app.json
+node compose.js jhipster-sample-app jhipster-sample-app.json 10
+```
+
+This will create another file at `gen/compose-result.json`

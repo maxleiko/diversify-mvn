@@ -90,7 +90,7 @@ fs.emptyDir('gen')
         variant.path = path.join('gen', PROJECT_PATH + '-' + i);
         return copyClone(pom, variant.deps, PROJECT_PATH, variant.path)
           .then(() => execClone('mvn test', variant))
-          .then((variant) => updateResult(path.join('gen', 'result.json'), variant))
+          .then((variant) => updateResult(path.join('gen', 'compose-result.json'), variant))
           .then((variant) => {
             if (variant.isValid) {
               console.log(` ${chalk.green('✔')} valid configuration ${chalk.blue(variant.path)}`);
