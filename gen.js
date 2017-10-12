@@ -78,19 +78,28 @@ fs.emptyDir(program.output)
 
             // pre-process mvnDeps to isolate unique deps from grouped deps
             const depGroups = {};
-            let depGroupsLength = 0;
             mvnDeps.forEach((dep) => {
               const key = dep.g.substr(0, 7);
               let grp = depGroups[key];
               if (!grp) {
                 grp = [];
                 depGroups[key] = grp;
-                depGroupsLength++;
               }
               grp.push(dep);
             });
+            // calculating possible clones
+            let possibleClones = 0;
+            Object.keys(depGroups).forEach((key) => {
+              const grp = depGroups[key];
+              let nbClones = Infinity;
+              for (let n=0; n < grp.length; n++) {
+                if (grp[n].versions.length < Infinity) {
+                  nbClones = grp[n].versions.length;
+                }
+              }
+              possibleClones += nbClones;
+            });
 
-            const possibleClones = program.depVersions * depGroupsLength;
             console.log(`Creating ${chalk.blue(possibleClones)} clone${possibleClones === 1 ? '':'s'} of ${chalk.gray(PROJECT_PATH)}`);
             return createClones(pom, depGroups, PROJECT_PATH, program.output);
           })
