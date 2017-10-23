@@ -94,10 +94,11 @@ fs.emptyDir('gen')
           .then((variant) => {
             if (variant.isValid) {
               console.log(` ${chalk.green('✔')} valid configuration ${chalk.blue(variant.path)}`);
-            } else {
+				return Promise.resolve();            
+			} else {
               console.log(` ${chalk.red('✘')} invalid configuration ${chalk.blue(variant.path)}`);
-            }
-            return fs.remove(variant.path);
+            	return fs.remove(variant.path);
+			}
           });
         },
         { concurrency: 1 });
