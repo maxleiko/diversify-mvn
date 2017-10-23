@@ -19,6 +19,16 @@ process.on('unhandledRejection', (err) => {
 });
 
 let PROJECT_PATH;
+const ignoreList = [];
+
+function processIgnoreList(valueToIgnore) {
+  const gav = valueToIgnore.split(':');
+  ignoreList.push({
+    g: gav[0],
+    a: gav[1],
+    v: gav[2] // this might be undefined if not needed (as in gav = "foo:bar")
+  });
+}
 
 const program = new commander.Command(pkgJson.name)
   .version(pkgJson.version)
@@ -28,6 +38,7 @@ const program = new commander.Command(pkgJson.name)
   .option('-d, --dep-versions <n>', 'How many different version of each dep should be crawled from Maven Central (default: 3)', (v) => parseInt(v, 10), 3)
   .option('-o, --output <path>', 'Output dir of the generated clones (default: gen)', 'gen')
   .option('-c, --cmd <command>', 'The command to execute on each clone (default: mvn test)', 'mvn test')
+  .option('-i, --ignore <g:a:v> [otherDeps...]', 'Dependencies to ignore in the process (groupId:artifactId)', processIgnoreList)
   .option('    --concurrency <n>', 'How many concurrent executions (default: 1)', (v) => parseInt(v, 10), 1)
   .option('--dry-run', 'Generate clones without executing the command')
   .option('--show-logs', 'Pipe tests std out/err to this process')
@@ -69,8 +80,9 @@ fs.emptyDir(program.output)
         console.log(`Retrieving the ${program.depVersions} latest versions of the dependencies`);
         return mvnDepsVersions(deps, program.depVersions)
           .then((mvnDeps) => {
-            return fs.emptyDir(program.output)
-              .then(() => mvnDeps);
+            return mvnDeps.filter((dep) => {
+              return !ignoreList.find((depToIgnore) => dep.g === depToIgnore.g && dep.a === depToIgnore.a);
+            });
           })
           .then((mvnDeps) => {
             console.log(chalk.blue('Available diversified dependencies:') + ' ' + mvnDeps.reduce((acc, next) => acc + next.versions.length, 0));
