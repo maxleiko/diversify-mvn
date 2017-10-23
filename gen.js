@@ -37,7 +37,8 @@ const program = new commander.Command(pkgJson.name)
   .action((name) => PROJECT_PATH = name)
   .option('-d, --dep-versions <n>', 'How many different version of each dep should be crawled from Maven Central (default: 3)', (v) => parseInt(v, 10), 3)
   .option('-o, --output <path>', 'Output dir of the generated clones (default: gen)', 'gen')
-  .option('-c, --cmd <command>', 'The command to execute on each clone (default: mvn test)', 'mvn test')
+  .option('-r, --run <command>', 'A command to run on each clone', 'mvn test')
+  .option('-t, --test <path/to/script>', 'A script to run after -r on each clone')
   .option('-i, --ignore <g:a:v> [otherDeps...]', 'Dependencies to ignore in the process (groupId:artifactId)', processIgnoreList)
   .option('    --concurrency <n>', 'How many concurrent executions (default: 1)', (v) => parseInt(v, 10), 1)
   .option('--dry-run', 'Generate clones without executing the command')
@@ -119,14 +120,14 @@ fs.emptyDir(program.output)
             console.log();
 
             if (program.dryRun) {
-              console.log(`Skipping execution of ${chalk.yellow(program.cmd)} (--dry-run)`);
+              console.log(`Skipping execution of ${chalk.yellow('mvn spring-boot:run')} & ${chalk.yellow('curl http://localhost:8080')} (--dry-run)`);
               return clones.map((clone) => Object.assign({ isValid: true }, clone));
             } else {
-              console.log(`Executing ${chalk.yellow(program.cmd)} on each clone (this may take a while, concurrency = ${program.concurrency})`);
+              console.log(`Executing ${chalk.yellow('mvn spring-boot:run')} & ${chalk.yellow('curl http://localhost:8080')} on each clone (this may take a while, concurrency = ${program.concurrency})`);
               return Promise.map(
                 clones,
                 (clone) => copyClone(pom, clone.deps, PROJECT_PATH, clone.path)
-                  .then(() => execClone(program.cmd, clone))
+                  .then(() => execClone(clone))
                   .then((clone) => updateResult(path.join(program.output, 'result.json'), clone))
                   .then((clone) => {
                     if (clone.isValid) {

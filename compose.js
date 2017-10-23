@@ -83,25 +83,24 @@ fs.emptyDir('gen')
       .then(({ pom }) => ({ variants, pom }));
   })
   .then(({ variants, pom }) => {
-    console.log(`Executing ${chalk.yellow('mvn test')} on each clone (this may take a while)`);
+    console.log(`Executing ${chalk.yellow('mvn spring-boot:run')} & ${chalk.yellow('curl http://localhost:8080')} on each clone (this may take a while)`);
     return Promise.map(
       variants,
       (variant, i) => {
         variant.path = path.join('gen', PROJECT_PATH + '-' + i);
         return copyClone(pom, variant.deps, PROJECT_PATH, variant.path)
-          .then(() => execClone('mvn test', variant))
+          .then(() => execClone(variant))
           .then((variant) => updateResult(path.join('gen', 'compose-result.json'), variant))
           .then((variant) => {
             if (variant.isValid) {
               console.log(` ${chalk.green('✔')} valid configuration ${chalk.blue(variant.path)}`);
-				return Promise.resolve();            
-			} else {
+              return Promise.resolve();
+            } else {
               console.log(` ${chalk.red('✘')} invalid configuration ${chalk.blue(variant.path)}`);
-            	return fs.remove(variant.path);
-			}
+              return fs.remove(variant.path);
+            }
           });
-        },
-        { concurrency: 1 });
+      }, { concurrency: 1 });
   })
   .then(() => {
     console.log();
