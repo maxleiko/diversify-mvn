@@ -1,5 +1,5 @@
 node_modules
-gen/
+examples/results/
 jhipster-sample-app/
 java-websocket/
 result.json
