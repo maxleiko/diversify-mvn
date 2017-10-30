@@ -32,7 +32,10 @@ Example:
   "appPath": "java-websocket",
   "versionsCount": 2,
   "engines": [
-    {}
+    { "socketPath": "/var/run/docker.sock" },
+    { "host": "10.0.0.1", "port": 2375 },
+    { "host": "10.0.0.2", "port": 2375 },
+    { "host": "10.0.0.3", "port": 2375 }
   ]
 }
 ```
