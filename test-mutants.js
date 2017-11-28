@@ -32,6 +32,9 @@ Promise.resolve()
     if (!config.outputDir) {
       config.outputDir = 'mutants-results';
     }
+    if (!config.blacklist) {
+      config.blacklist = [];
+    }
   })
   .then(() => fs.emptyDir(path.resolve(process.cwd(), config.outputDir)))
   // .then(() => fs.ensureDir(path.resolve(process.cwd(), config.outputDir)))
@@ -40,6 +43,7 @@ Promise.resolve()
     // get rid of test dependencies
     const deps = pom.project.dependencies[0].dependency
       .filter((dep) => !dep.scope || dep.scope[0] !== 'test')
+      .filter((dep) => !config.blacklist.find((s) => s === `${dep.groupId[0]}:${dep.artifactId[0]}`))
       .map((dep) => ({ g: dep.groupId[0], a: dep.artifactId[0] }));
     return { pom, deps };
   })
