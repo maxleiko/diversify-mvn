@@ -39,3 +39,29 @@ Example:
   ]
 }
 ```
+
+### Operating System diversification with Polyverse.io
+If you want to go further into the diversification of your mutants, you can add [Polyverse.io](https://polyverse.io) to your Docker images. This will replace all the currently installed packages (only Ubuntu, CentOS and Alpine supported) with diversified ones.
+
+To add this layer of diversification, add those lines to your Dockerfile:
+### Ubuntu
+```
+...
+RUN curl https://repo.polyverse.io/install.sh | sh -s czcw7pjshny8lzzog8bgiizfr
+RUN apt-get update && apt-get -y --allow-change-held-packages install --reinstall $(dpkg --get-selections | awk '{print $1}')
+...
+```
+### Alpine
+```
+...
+RUN curl https://repo.polyverse.io/install.sh | sh -s czcw7pjshny8lzzog8bgiizfr
+RUN sed -n -i '/repo.polyverse.io/p' /etc/apk/repositories && apk upgrade --update-cache --available
+...
+```
+### CentOS
+```
+...
+RUN curl https://repo.polyverse.io/install.sh | sh -s czcw7pjshny8lzzog8bgiizfr
+RUN yum reinstall -y \*
+...
+```
