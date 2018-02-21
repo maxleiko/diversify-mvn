@@ -40,6 +40,19 @@ Example:
 }
 ```
 
+### Blacklist dependencies
+Sometimes you do not want some dependencies to be diversified, for that we've introduced "blacklist".  
+Blacklist is an array of strings:
+```json
+{
+  "blacklist": [
+    "groupId:artifactId",
+    "allThatGroupId"
+  ]
+}
+```
+In this example, the dependency `groupId:artifactId` will not be changed by the program, and all the dependencies that have `allThatGroupId` as groupId will also not be changed.
+
 ### Operating System diversification with Polyverse.io
 If you want to go further into the diversification of your mutants, you can add [Polyverse.io](https://polyverse.io) to your Docker images. This will replace all the currently installed packages (only Ubuntu, CentOS and Alpine supported) with diversified ones.
 

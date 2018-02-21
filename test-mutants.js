@@ -29,6 +29,9 @@ Promise.resolve()
 
     const CONFIG_PATH = path.resolve(process.cwd(), process.argv[2]);
     config = require(CONFIG_PATH);
+    if (!config.pomPath) {
+      config.pomPath = ''; // defaults to "appPath"
+    }
     if (!config.outputDir) {
       config.outputDir = 'mutants-results';
     }
@@ -38,14 +41,18 @@ Promise.resolve()
   })
   .then(() => fs.emptyDir(path.resolve(process.cwd(), config.outputDir)))
   // .then(() => fs.ensureDir(path.resolve(process.cwd(), config.outputDir)))
-  .then(() => readPom(config.appPath))
+  .then(() => readPom(path.join(config.appPath, config.pomPath)))
   .then((pom) => {
-    // get rid of test dependencies
-    const deps = pom.project.dependencies[0].dependency
-      .filter((dep) => !dep.scope || dep.scope[0] !== 'test')
-      .filter((dep) => !config.blacklist.find((s) => s === `${dep.groupId[0]}:${dep.artifactId[0]}`))
-      .map((dep) => ({ g: dep.groupId[0], a: dep.artifactId[0] }));
-    return { pom, deps };
+    if (pom.project.dependencies && pom.project.dependencies.length > 0) {
+      // get rid of test dependencies
+      const deps = pom.project.dependencies[0].dependency
+        .filter((dep) => !dep.scope || dep.scope[0] !== 'test')
+        .filter((dep) => !config.blacklist.find((s) => `${dep.groupId[0]}:${dep.artifactId[0]}`.startsWith(s)))
+        .map((dep) => ({ g: dep.groupId[0], a: dep.artifactId[0] }));
+      return { pom, deps };
+    }
+    const { groupId, artifactId, version } = pom.project;
+    throw new Error(`No dependencies found in "${groupId[0]}:${artifactId[0]}:${version[0]}"`);
   })
   .then(({ pom, deps }) => createGroups(deps, config.versionsCount)
     .then((groups) => {

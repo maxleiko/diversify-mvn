@@ -1,8 +1,15 @@
 {
-  "appPath": "java-websocket",
+  "appPath": "keycloak",
+  "pomPath": "testsuite/utils",
   "versionsCount": 2,
-  "outputDir": "examples/results",
+  "outputDir": ".results",
   "engines": [
     { "socketPath": "/var/run/docker.sock" }
-  ]
+  ],
+  "blacklist": [
+    "org.keycloak"
+  ],
+  "containerOptions": {
+    "Binds": ["/home/leiko/.m2:/root/.m2:rw"]
+  }
 }

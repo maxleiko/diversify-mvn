@@ -1,5 +1,7 @@
 node_modules
-examples/results/
 jhipster-sample-app/
 java-websocket/
+keycloak/
 result.json
+.idea
+.results
