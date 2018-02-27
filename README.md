@@ -14,15 +14,19 @@ diversify-mvn config.json
 ```
 
 ### Config
-```json
-{
-  "appPath": <string>,
-  "versionsCount": <number>,
-  "mutantsLimit": <optional number>,
-  "outputDir": <optional string>,
-  "engines": [
-    <object (dockerode options)>
-  ]
+```ts
+export interface Config {
+  appPath: string;
+  versionsCount: number;
+  engines: { [s: string]: string }[];
+
+  pomPath?: string; // ''
+  outputDir?: string; // '.results'
+  blacklist?: string[]; // []
+  mutantsLimit?: number; // computed
+  containerOptions?: { [s: string]: string[] | string | boolean | number } // {}
+  taskTimeout?: number; // 1500
+  overwriteContainer?: boolean; // false
 }
 ```
 
