@@ -1,13 +1,15 @@
+import * as Dockerode from 'dockerode';
+
 export interface Config {
   appPath: string;
   versionsCount: number;
-  engines: { [s: string]: string }[];
+  engines: Dockerode.DockerOptions[];
 
   pomPath?: string;
   outputDir?: string;
   blacklist?: string[];
   mutantsLimit?: number;
-  containerOptions?: { [s: string]: string[] | string | boolean | number }
+  containerOptions?: Dockerode.ContainerCreateOptions;
   taskTimeout?: number;
   overwriteContainer?: boolean;
 }

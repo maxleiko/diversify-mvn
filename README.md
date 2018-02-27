@@ -5,7 +5,9 @@ If the output of the `docker run mutant-image` is Exit 0 => Success, otherwise i
 
 ### Installation
 ```sh
-npm i -g diversify-mvn
+git clone git@github.com:maxleiko/diversify-mvn.git
+cd diversify-mvn
+npm link
 ```
 
 ### Usage
@@ -18,17 +20,18 @@ diversify-mvn config.json
 export interface Config {
   appPath: string;
   versionsCount: number;
-  engines: { [s: string]: string }[];
+  engines: Dockerode.DockerOptions[];
 
   pomPath?: string; // ''
   outputDir?: string; // '.results'
   blacklist?: string[]; // []
   mutantsLimit?: number; // computed
-  containerOptions?: { [s: string]: string[] | string | boolean | number } // {}
+  containerOptions?: Dockerode.ContainerCreateOptions; // {}
   taskTimeout?: number; // 1500
   overwriteContainer?: boolean; // false
 }
 ```
+> `Dockerode.DockerOptions` and `Dockerode.ContainerCreateOptions` come from [dockerode](https://github.com/apocas/dockerode)
 
 Example:
 ```json
@@ -56,6 +59,11 @@ Blacklist is an array of strings:
 }
 ```
 In this example, the dependency `groupId:artifactId` will not be changed by the program, and all the dependencies that have `allThatGroupId` as groupId will also not be changed.
+
+### Debug
+```sh
+DEBUG=diversify-mvn:* diversify-mvn config.json
+```
 
 ### Operating System diversification with Polyverse.io
 If you want to go further into the diversification of your mutants, you can add [Polyverse.io](https://polyverse.io) to your Docker images. This will replace all the currently installed packages (only Ubuntu, CentOS and Alpine supported) with diversified ones.

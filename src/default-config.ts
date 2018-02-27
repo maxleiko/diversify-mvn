@@ -1,15 +1,16 @@
 import { Config, Groups } from './api';
 import { isNumber, isBoolean } from 'util';
+import * as Dockerode from 'dockerode';
 
 export default class DefaultConfig implements Config {
   appPath: string;
   versionsCount: number;
-  engines: { [s: string]: string }[];
+  engines: Dockerode.DockerOptions[];
 
   pomPath: string;
   outputDir: string;
   blacklist: string[];
-  containerOptions: { [s: string]: string[] | string | boolean | number }
+  containerOptions: Dockerode.ContainerCreateOptions;
   taskTimeout: number;
   overwriteContainer: boolean;
 
