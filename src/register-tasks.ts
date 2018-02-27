@@ -1,21 +1,28 @@
-const fs = require('fs-extra');
-const chalk = require('chalk');
+import * as fs from 'fs-extra';
+import chalk from 'chalk';
 
-const { size } = require('./already-tested');
-const testMutant = require('./test-mutant');
-const createMutant = require('./create-mutant');
+import { mvn, Groups } from './api';
+import DefaultConfig from './default-config';
+import DockerEngine from './docker-engine';
+import { size } from './already-tested';
+import testMutant from './test-mutant';
+import createMutant from './create-mutant';
+import { isNumber } from 'util';
+import logger from './logger';
 
-function registerTask(engines, config, pom, groups) {
+const debug = logger('register-task');
+
+export default function registerTask(engines: DockerEngine[], config: DefaultConfig, pom: mvn.Pom, groups: Groups) {
   return new Promise((resolve) => {
     function run() {
       const engine = engines.find((engine) => engine.available);
       if (engine) {
         // an engine is available
         //   - check if we have reached the limit
-        const mutantsLimit = parseInt(config.mutantsLimit, 10) || Math.pow(Object.keys(groups).length, (config.versionsCount + 1));
-        if (size() < mutantsLimit) {
+        debug(`available Docker engine: ${engine}`);
+        if (size() < config.mutantsLimit!) {
           // we have not reached our limit yet
-          const mutant = createMutant(groups);
+          const mutant = createMutant(config, groups);
           engine.available = false;
           testMutant(engine.docker, config, pom, mutant)
             .then(() => {
@@ -38,11 +45,11 @@ function registerTask(engines, config, pom, groups) {
         }
       } else {
         // no available container: wait a bit
-        setTimeout(run, 1500);
+        const timeout = isNumber(config.taskTimeout) ? config.taskTimeout : 1500;
+        debug(`no Docker engine available waiting ${timeout}ms`);
+        setTimeout(run, timeout);
       }
     }
     run();
   });
 }
-
-module.exports = registerTask;

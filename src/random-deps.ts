@@ -1,12 +1,13 @@
-const random = require('./random');
+import random from './random';
+import { Groups, Dep } from './api';
 
 /**
  * Returns a list of random dependencies based on the given groups
  * @param  {Object} groups the groups
  * @return {Array}         a list of deps created based on the given groups
  */
-function randomDeps(groups) {
-  const deps = [];
+export default function randomDeps(groups: Groups) {
+  const deps: Dep[] = [];
   const groupIds = Object.keys(groups);
   const nbMutantGroups = random(1, groupIds.length);
   const alreadyUsed = {};
@@ -29,5 +30,3 @@ function randomDeps(groups) {
     return 0;
   });
 }
-
-module.exports = randomDeps;

@@ -1,10 +1,15 @@
-const mvnDepsVersions = require('./mvn-deps-versions');
+import mvnDepsVersions from './mvn-deps-versions';
+import { Groups, Dep } from './api';
+import logger from './logger';
 
-function createGroups(deps, versionsCount) {
+const debug = logger('create-group');
+
+export default function createGroups(deps: Dep[], versionsCount: number) {
+  debug('create groups');
   return mvnDepsVersions(deps, versionsCount)
     .then((mvnDeps) => {
       // pre-process mvnDeps to isolate deps in "groups"
-      const groups = {};
+      const groups: Groups = {};
       mvnDeps
         .forEach(({ g, a, versions }) => {
           let grp = groups[g];
@@ -17,5 +22,3 @@ function createGroups(deps, versionsCount) {
       return groups;
     });
 }
-
-module.exports = createGroups;

@@ -1,0 +1,9 @@
+{
+  "appPath": "java-websocket",
+  "versionsCount": 2,
+  "outputDir": ".results/java-websocket",
+  "overwriteContainer": true,
+  "engines": [
+    { "socketPath": "/var/run/docker.sock" }
+  ]
+}

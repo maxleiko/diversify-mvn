@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "description": "Automatically diversify and tests Maven projects using Docker",
   "bin": {
-    "diversify-mvn": "test-mutants.js"
+    "diversify-mvn": "build/index.js"
   },
   "scripts": {
+    "start": "node build/index.js",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Maxime Tricoire <max.tricoire@gmail.com>",
@@ -17,10 +19,21 @@
     "fs-extra": "^4.0.2",
     "request": "^2.83.0",
     "tar": "^4.0.2",
-    "xml2js": "^0.4.19"
+    "xml2js": "^0.4.19",
+    "debug": "^3.1.0"
   },
   "devDependencies": {
+    "@types/bluebird": "^3.5.20",
+    "@types/debug": "^0.0.30",
+    "@types/dockerode": "^2.5.4",
+    "@types/fs-extra": "^5.0.1",
+    "@types/node": "^9.4.6",
+    "@types/request": "^2.47.0",
+    "@types/tar": "^4.0.0",
+    "@types/xml2js": "^0.4.2",
     "eslint": "^4.8.0",
-    "eslint-config-kevoree": "^1.0.1"
+    "eslint-config-kevoree": "^1.0.1",
+    "tslint": "^5.9.1",
+    "typescript": "^2.7.2"
   }
 }

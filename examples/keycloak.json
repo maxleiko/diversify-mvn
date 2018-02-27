@@ -2,7 +2,7 @@
   "appPath": "keycloak",
   "pomPath": "testsuite/utils",
   "versionsCount": 2,
-  "outputDir": ".results",
+  "outputDir": ".results/keycloak",
   "engines": [
     { "socketPath": "/var/run/docker.sock" }
   ],
