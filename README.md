@@ -7,6 +7,8 @@ If the output of the `docker run mutant-image` is Exit 0 => Success, otherwise i
 ```sh
 git clone git@github.com:maxleiko/diversify-mvn.git
 cd diversify-mvn
+npm install
+npm run build
 npm link
 ```
 
