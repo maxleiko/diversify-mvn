@@ -1,4 +1,5 @@
 import * as Docker from 'dockerode';
+import * as Promise from 'bluebird';
 
 /**
  * Dockerode wrapper

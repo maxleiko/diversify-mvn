@@ -15,6 +15,7 @@ export default class DefaultConfig implements Config {
   overwriteContainer: boolean;
 
   mutantsLimit?: number;
+  private _hrMutantsLimit: string;
 
   constructor(config: Config) {
     this.appPath = config.appPath;
@@ -31,6 +32,15 @@ export default class DefaultConfig implements Config {
   }
 
   updateMutantsLimit(groups: Groups) {
-    this.mutantsLimit = isNumber(this.mutantsLimit) ? this.mutantsLimit : Math.pow(Object.keys(groups).length, (this.versionsCount + 1));
+    if (isNumber(this.mutantsLimit)) {
+      this._hrMutantsLimit = this.mutantsLimit + '';
+    } else {
+      this.mutantsLimit = Math.pow(Object.keys(groups).length, (this.versionsCount + 1));
+      this._hrMutantsLimit = Object.keys(groups).length + '^' + (this.versionsCount + 1);
+    }
+  }
+
+  get hrMutantsLimit() {
+    return this._hrMutantsLimit;
   }
 }

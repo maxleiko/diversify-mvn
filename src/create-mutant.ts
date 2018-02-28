@@ -9,6 +9,7 @@ import DefaultConfig from './default-config';
 export default function createMutant(config: DefaultConfig, groups: Groups): Mutant {
   let dependencies = randomDeps(groups);
   let hash_ = hash(dependencies);
+  
   while (alreadyTested(hash_)) {
     dependencies = randomDeps(groups);
     hash_ = hash(dependencies);

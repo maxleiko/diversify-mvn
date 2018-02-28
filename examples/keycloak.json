@@ -1,6 +1,5 @@
 {
   "appPath": "keycloak",
-  "pomPath": "testsuite/utils",
   "versionsCount": 2,
   "outputDir": ".results/keycloak",
   "engines": [

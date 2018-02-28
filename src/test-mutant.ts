@@ -3,6 +3,7 @@ import * as tar from 'tar';
 import * as path from 'path';
 import * as Docker from 'dockerode';
 import { Writable } from 'stream';
+import chalk from 'chalk';
 
 
 import { Mutant, mvn } from './api';
@@ -47,21 +48,23 @@ export default function testMutant(docker: Docker, config: DefaultConfig, pom: m
     })
     .then((container) => container.start())
     .then((container) => container.wait())
-    .then(({ StatusCode }) => {
-      if (StatusCode !== 0) {
-        throw new Error(`Mutant ${mutant.hash} process exit (${StatusCode})`);
+    .then((resp) => {
+      if (resp.StatusCode !== 0) {
+        throw resp;
       }
     });
-    // TODO remove images & containers that failed
 }
 
 function buildImage(docker: Docker, mutant: Mutant) {
-  const mutantTar = `${mutant.dir}.tar`;
+  function imgFoundHandler() {
+    debug('skipping image build', mutant.name, '(already exists)');
+  }
 
-  const img = docker.getImage(mutant.name);
-  if (!img) {
+  function imgNotFoundHandler() {
     debug(`building image ${mutant.name}`);
-    return () => fs.readdir(mutant.dir)
+    const mutantTar = `${mutant.dir}.tar`;
+
+    return fs.readdir(mutant.dir)
     .then((files) => tar.c({ cwd: mutant.dir, gzip: false, file: mutantTar }, files))
     .then(() => {
       return new Promise((resolve, reject) => {
@@ -84,18 +87,21 @@ function buildImage(docker: Docker, mutant: Mutant) {
     .then(() => fs.remove(mutantTar))
     .then(() => new Promise((resolve) => setTimeout(resolve, 3500)));
   }
-  debug('skipping image build', mutant.name, '(already exists)');
 
-  return null;
+  return docker.getImage(mutant.name)
+    .inspect()
+    .then(imgFoundHandler, imgNotFoundHandler);
 }
 
 function removeContainer(docker: Docker, mutant: Mutant, config: DefaultConfig) { 
-  if (config.overwriteContainer) {
-    const container = docker.getContainer(mutant.name);
-    if (container) {
-      debug(`removing container ${mutant.name}`);
-      return container.remove();
-    }
-  }
-  return null;
+  return Promise.resolve()
+    .then(() => {
+      if (config.overwriteContainer) {
+        const container = docker.getContainer(mutant.name);
+        debug(`removing container ${mutant.name} ${chalk.gray('(overwriteContainer: true)')}`);
+        return container.remove()
+          .then(() => null, (ignore) => null); // ignore error if container does not exists
+      }
+      return null;
+    });
 }

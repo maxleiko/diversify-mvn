@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import 'bluebird';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import chalk from 'chalk';
@@ -10,13 +9,13 @@ import DockerEngine from './docker-engine';
 import createGroups from './create-groups';
 import registerTasks from './register-tasks';
 import DefaultConfig from './default-config';
+import logger from './logger';
 
+const debug = logger('index');
 
 function handleError(err: any) {
-  console.log(chalk.red('Error:') + ' ' + err.message);
-  if (process.env.DEBUG) {
-    console.log(err.stack.split('\n').slice(1).join('\n'));
-  }
+  console.error(chalk.red('Error:') + ' ' + err.message);
+  debug(err.stack.split('\n').slice(1).join('\n'));
   process.exit(1);
 }
 
@@ -56,7 +55,7 @@ Promise.resolve()
       console.log(`${chalk.blue('Groups:')}         ${Object.keys(groups).length}`);
       console.log(`${chalk.blue('Artifacts:')}      ${Object.keys(groups).reduce((acc, key) => acc + groups[key].artifacts.length, 0)}`);
       console.log(`${chalk.blue('Versions:')}       ${Object.keys(groups).reduce((acc, key) => acc + groups[key].artifacts.length * groups[key].versions.length, 0)}`);
-      console.log(`${chalk.blue('Mutants limit:')}  ${config.mutantsLimit}`);
+      console.log(`${chalk.blue('Mutants limit:')}  ${config.hrMutantsLimit}`);
       console.log();
       return { pom, groups };
     }))
@@ -67,5 +66,4 @@ Promise.resolve()
   .then(() => {
     console.log();
     console.log(`You can find the results in the ${chalk.green(config.outputDir!)} directory`);
-  })
-  .catch(handleError);
+  });

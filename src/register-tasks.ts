@@ -33,7 +33,7 @@ export default function registerTask(engines: DockerEngine[], config: DefaultCon
               console.log(` ${chalk.red('✘')} ${mutant.name}`);
               mutant.valid = false;
               fs.writeJson(`${mutant.dir}/.mutant/results.json`, mutant, { spaces: 2 });
-              fs.writeFile(`${mutant.dir}/.mutant/error-logs.txt`, err.stack);
+              fs.writeFile(`${mutant.dir}/.mutant/error.log`, JSON.stringify(err, null, 2));
             })
             .then(() => {
               engine.available = true;
@@ -46,7 +46,7 @@ export default function registerTask(engines: DockerEngine[], config: DefaultCon
       } else {
         // no available container: wait a bit
         const timeout = isNumber(config.taskTimeout) ? config.taskTimeout : 1500;
-        debug(`no Docker engine available waiting ${timeout}ms`);
+        debug(`no Docker engine available yet, waiting ${timeout}ms`);
         setTimeout(run, timeout);
       }
     }
