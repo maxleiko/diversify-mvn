@@ -1,15 +1,16 @@
 #!/usr/bin/env node
-import * as fs from 'fs-extra';
 import * as path from 'path';
 import chalk from 'chalk';
 
-import { Config } from './api';
+import { Config, Dep, mvn } from './api';
 import readPom from './read-pom';
 import DockerEngine from './docker-engine';
 import createGroups from './create-groups';
 import registerTasks from './register-tasks';
 import DefaultConfig from './default-config';
 import logger from './logger';
+import cleanOutputDir from './clean-output-dir';
+import { inspect } from 'util';
 
 const debug = logger('index');
 
@@ -26,27 +27,43 @@ let config: DefaultConfig;
 Promise.resolve()
   .then(() => {
     if (typeof process.argv[2] !== 'string') {
-      throw new Error('You need to specify the path to a config.json in argument');
+      throw new Error(`Please specify the configuration file:\n  ${chalk.cyan('diversify-mvn')} ${chalk.green('</path/to/config.json>')}`);
     }
 
     const CONFIG_PATH = path.resolve(process.cwd(), process.argv[2]);
     const c: Config = require(CONFIG_PATH);
     config = new DefaultConfig(c);
   })
-  .then(() => fs.emptyDir(path.resolve(process.cwd(), config.outputDir)))
-  // .then(() => fs.ensureDir(path.resolve(process.cwd(), config.outputDir)))
+  .then(() => cleanOutputDir(config.outputDir))
   .then(() => readPom(path.join(config.appPath, config.pomPath)))
   .then((pom) => {
+    let mvnDeps: mvn.Dependency[] = [];
+    console.log(inspect(pom, false, null, true));
+
+    if (pom.project.dependencyManagement && pom.project.dependencyManagement.length > 0) {
+      mvnDeps = mvnDeps.concat(pom.project.dependencyManagement[0].dependencies[0].dependency || []);
+    }
     if (pom.project.dependencies && pom.project.dependencies.length > 0) {
+      mvnDeps = mvnDeps.concat(pom.project.dependencies[0].dependency || []);
+    }
+
+    console.log(mvnDeps.forEach((dep) => {
+      console.log('---');
+      console.log(dep);
+      console.log('---');
+    }));
+
+    if (mvnDeps.length > 0) {
       // get rid of test dependencies
-      const deps = pom.project.dependencies[0].dependency
+      const deps: Dep[] = mvnDeps
         .filter((dep) => !dep.scope || dep.scope[0] !== 'test')
         .filter((dep) => !config.blacklist!.find((s) => `${dep.groupId[0]}:${dep.artifactId[0]}`.startsWith(s)))
         .map((dep) => ({ g: dep.groupId[0], a: dep.artifactId[0] }));
       return { pom, deps };
     }
     const { groupId, artifactId, version } = pom.project;
-    throw new Error(`No dependencies found in "${groupId[0]}:${artifactId[0]}:${version[0]}"`);
+    const art = `${chalk.cyan(groupId[0])}:${chalk.cyan(artifactId[0])}:${chalk.cyan(version[0])}`;
+    throw new Error(`No dependencies found in ${art}`);
   })
   .then(({ pom, deps }) => createGroups(deps, config.versionsCount)
     .then((groups) => {

@@ -11,7 +11,20 @@ const debug = logger('modify-pom');
 export default function modifyPom(pom: mvn.Pom, deps: Dep[]) {
   debug('cloning pom');
   pom = JSON.parse(JSON.stringify(pom)); // clone
-  pom.project.dependencies![0].dependency
+
+  if (pom.project.dependencyManagement && pom.project.dependencyManagement.length > 0) {
+    update(pom.project.dependencyManagement[0].dependencies[0].dependency, deps);
+  }
+  if (pom.project.dependencies && pom.project.dependencies.length > 0) {
+    update(pom.project.dependencies[0].dependency, deps);
+  }
+
+  debug('pom modified');
+  return pom;
+}
+
+function update(dependencies: mvn.Dependency[], deps: Dep[]) {
+  dependencies
     // remove test scope
     .filter((dep) => !dep.scope || dep.scope[0] !== 'test')
     // only keep matching deps
@@ -21,6 +34,4 @@ export default function modifyPom(pom: mvn.Pom, deps: Dep[]) {
       const foundDep = deps.find(({ g, a }) => dep.groupId[0] === g && dep.artifactId[0] === a)!;
       dep.version = [ foundDep.v! ];
     });
-  debug('pom modified');
-  return pom;
 }

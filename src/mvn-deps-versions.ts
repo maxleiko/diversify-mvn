@@ -1,4 +1,3 @@
-import 'bluebird';
 import searchMaven from './search-maven';
 import { Dep } from './api';
 import logger from './logger';

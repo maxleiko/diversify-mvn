@@ -1,0 +1,9 @@
+{
+  "appPath": "multi-module-proj",
+  "versionsCount": 3,
+  "outputDir": ".results/multi-module-proj",
+  "overwriteContainer": true,
+  "engines": [
+    { "socketPath": "/var/run/docker.sock" }
+  ]
+}

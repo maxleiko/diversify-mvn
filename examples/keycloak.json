@@ -1,7 +1,9 @@
 {
   "appPath": "keycloak",
   "versionsCount": 2,
+  "mutantsLimit": 4,
   "outputDir": ".results/keycloak",
+  "overwriteContainer": true,
   "engines": [
     { "socketPath": "/var/run/docker.sock" }
   ],

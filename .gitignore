@@ -3,6 +3,7 @@ jhipster-sample-app/
 jhipster-app/
 java-websocket/
 keycloak/
+multi-module-proj
 result.json
 .idea
 .results

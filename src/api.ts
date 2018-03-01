@@ -44,7 +44,13 @@ export namespace mvn {
     groupId: string[];
     artifactId: string[];
     version: string[];
+    packaging: string[];
     dependencies?: Dependencies[];
+    dependencyManagement?: DependencyManagement[];
+  }
+
+  export interface DependencyManagement {
+    dependencies: Dependencies[];
   }
 
   export interface Dependencies {
