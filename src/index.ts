@@ -10,7 +10,6 @@ import registerTasks from './register-tasks';
 import DefaultConfig from './default-config';
 import logger from './logger';
 import cleanOutputDir from './clean-output-dir';
-import { inspect } from 'util';
 
 const debug = logger('index');
 
@@ -38,7 +37,6 @@ Promise.resolve()
   .then(() => readPom(path.join(config.appPath, config.pomPath)))
   .then((pom) => {
     let mvnDeps: mvn.Dependency[] = [];
-    console.log(inspect(pom, false, null, true));
 
     if (pom.project.dependencyManagement && pom.project.dependencyManagement.length > 0) {
       mvnDeps = mvnDeps.concat(pom.project.dependencyManagement[0].dependencies[0].dependency || []);
@@ -46,12 +44,6 @@ Promise.resolve()
     if (pom.project.dependencies && pom.project.dependencies.length > 0) {
       mvnDeps = mvnDeps.concat(pom.project.dependencies[0].dependency || []);
     }
-
-    console.log(mvnDeps.forEach((dep) => {
-      console.log('---');
-      console.log(dep);
-      console.log('---');
-    }));
 
     if (mvnDeps.length > 0) {
       // get rid of test dependencies
