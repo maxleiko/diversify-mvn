@@ -57,17 +57,23 @@ Promise.resolve()
     const art = `${chalk.cyan(groupId[0])}:${chalk.cyan(artifactId[0])}:${chalk.cyan(version[0])}`;
     throw new Error(`No dependencies found in ${art}`);
   })
-  .then(({ pom, deps }) => createGroups(deps, config.versionsCount)
-    .then((groups) => {
-      config.updateMutantsLimit(groups);
-      console.log(`${chalk.blue('Dependencies:')}   ${deps.length}`);
-      console.log(`${chalk.blue('Groups:')}         ${Object.keys(groups).length}`);
-      console.log(`${chalk.blue('Artifacts:')}      ${Object.keys(groups).reduce((acc, key) => acc + groups[key].artifacts.length, 0)}`);
-      console.log(`${chalk.blue('Versions:')}       ${Object.keys(groups).reduce((acc, key) => acc + groups[key].artifacts.length * groups[key].versions.length, 0)}`);
-      console.log(`${chalk.blue('Mutants limit:')}  ${config.hrMutantsLimit}`);
-      console.log();
-      return { pom, groups };
-    }))
+  .then(({ pom, deps }) => {
+    let repos: string[] = ['https://repo1.maven.org/maven2/']; // defaults to Maven Central
+    if (pom.project.repositories) {
+      repos = repos.concat(pom.project.repositories[0].repository.map((repo) => repo.url[0]));
+    }
+    return createGroups(repos, deps, config.versionsCount)
+      .then((groups) => {
+        config.updateMutantsLimit(groups);
+        console.log(`${chalk.blue('Dependencies:')}   ${deps.length}`);
+        console.log(`${chalk.blue('Groups:')}         ${Object.keys(groups).length}`);
+        console.log(`${chalk.blue('Artifacts:')}      ${Object.keys(groups).reduce((acc, key) => acc + groups[key].artifacts.length, 0)}`);
+        console.log(`${chalk.blue('Versions:')}       ${Object.keys(groups).reduce((acc, key) => acc + groups[key].artifacts.length * groups[key].versions.length, 0)}`);
+        console.log(`${chalk.blue('Mutants limit:')}  ${config.hrMutantsLimit}`);
+        console.log();
+        return { pom, groups };
+      });
+  })
   .then(({ pom, groups }) => {
     const engines = config.engines.map((dockerOpts) => new DockerEngine(dockerOpts));
     return registerTasks(engines, config, pom, groups);

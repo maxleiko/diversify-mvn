@@ -4,9 +4,9 @@ import logger from './logger';
 
 const debug = logger('create-group');
 
-export default function createGroups(deps: Dep[], versionsCount: number) {
+export default function createGroups(repos: string[], deps: Dep[], versionsCount: number) {
   debug('create groups');
-  return mvnDepsVersions(deps, versionsCount)
+  return mvnDepsVersions(repos, deps, versionsCount)
     .then((mvnDeps) => {
       // pre-process mvnDeps to isolate deps in "groups"
       const groups: Groups = {};

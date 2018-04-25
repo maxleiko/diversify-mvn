@@ -8,32 +8,45 @@
   "scripts": {
     "start": "node build/index.js",
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "Maxime Tricoire <max.tricoire@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "bluebird": "^3.5.0",
     "chalk": "^2.1.0",
+    "debug": "^3.1.0",
     "dockerode": "^2.5.3",
     "fs-extra": "^4.0.2",
     "request": "^2.83.0",
     "tar": "^4.0.2",
-    "xml2js": "^0.4.19",
-    "debug": "^3.1.0"
+    "xml2js": "^0.4.19"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.20",
     "@types/debug": "^0.0.30",
     "@types/dockerode": "^2.5.4",
     "@types/fs-extra": "^5.0.1",
+    "@types/jest": "^22.2.3",
     "@types/node": "^9.4.6",
     "@types/request": "^2.47.0",
     "@types/tar": "^4.0.0",
     "@types/xml2js": "^0.4.2",
     "eslint": "^4.8.0",
     "eslint-config-kevoree": "^1.0.1",
+    "jest": "^22.4.3",
+    "ts-jest": "^22.4.4",
     "tslint": "^5.9.1",
     "typescript": "^2.7.2"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "/tests/.*\\.test\\.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ]
   }
 }

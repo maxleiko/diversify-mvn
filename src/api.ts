@@ -47,6 +47,7 @@ export namespace mvn {
     packaging: string[];
     dependencies?: Dependencies[];
     dependencyManagement?: DependencyManagement[];
+    repositories?: Repositories[];
   }
 
   export interface DependencyManagement {
@@ -64,5 +65,34 @@ export namespace mvn {
     scope?: string;
   }
 
+  export interface Repositories {
+    repository: Repository[];
+  }
+
+  export interface Repository {
+    id: string[];
+    layout: string[];
+    name: string[];
+    url: string[];
+  }
+
   // TODO add what you need
+  export interface MetaData {
+    metadata: {
+      groupId: string[];
+      artifactId: string[];
+      versioning: Versioning[];
+    };
+  }
+
+  export interface Versioning {
+    latest: string[];
+    release: string[];
+    lastUpdated: number[];
+    versions: Versions[];
+  }
+
+  export interface Versions {
+    version: string[];
+  }
 }

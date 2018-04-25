@@ -1,6 +1,6 @@
 {
   "appPath": "java-websocket",
-  "versionsCount": 2,
+  "versionsCount": 1,
   "outputDir": ".results/java-websocket",
   "overwriteContainer": true,
   "engines": [
