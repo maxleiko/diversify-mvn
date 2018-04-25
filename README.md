@@ -4,6 +4,12 @@ Then build a Docker image using the Dockerfile of the project (should be availab
 If the output of the `docker run mutant-image` is Exit 0 => Success, otherwise it's a failure.
 
 ### Installation
+From `npm`
+```sh
+npm i -g diversify-mvn
+```
+
+From source
 ```sh
 git clone git@github.com:maxleiko/diversify-mvn.git
 cd diversify-mvn
@@ -20,17 +26,17 @@ diversify-mvn config.json
 ### Config
 ```ts
 export interface Config {
-  appPath: string;
-  versionsCount: number;
-  engines: Dockerode.DockerOptions[];
+  appPath: string; // where to find the Java project to diversify
+  versionsCount: number; // the "range" of versions to do mutations on
+  engines: Dockerode.DockerOptions[]; // cf. dockerode doc
 
-  pomPath?: string; // ''
-  outputDir?: string; // '.results'
-  blacklist?: string[]; // []
-  mutantsLimit?: number; // computed
-  containerOptions?: Dockerode.ContainerCreateOptions; // {}
-  taskTimeout?: number; // 1500
-  overwriteContainer?: boolean; // false
+  pomPath?: string; // default: ''
+  outputDir?: string; // default: '.results'
+  blacklist?: string[]; // default: []
+  mutantsLimit?: number; // default: nbGroups^(versionsCount+1)
+  containerOptions?: Dockerode.ContainerCreateOptions; // default: {}
+  taskTimeout?: number; // default: 1500
+  overwriteContainer?: boolean; // default: false
 }
 ```
 > `Dockerode.DockerOptions` and `Dockerode.ContainerCreateOptions` come from [dockerode](https://github.com/apocas/dockerode)
