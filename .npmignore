@@ -1,1 +1,13 @@
 !build
+node_modules
+jhipster-sample-app/
+jhipster-app/
+java-websocket/
+keycloak/
+multi-module-proj
+jitsi-videobridge
+result.json
+.idea
+.results
+src
+tests
