@@ -1,14 +1,12 @@
 {
-  "appPath": "keycloak",
-  "versionsCount": 3,
-  "outputDir": ".results/keycloak",
+  "appPath": "jitsi-videobridge",
+  "versionsCount": 5,
+  "outputDir": ".results/jitsi-videobridge",
   "overwriteContainer": true,
   "engines": [
     { "socketPath": "/var/run/docker.sock" }
   ],
-  "blacklist": [
-    "org.keycloak"
-  ],
+  "blacklist": [],
   "containerOptions": {
     "Binds": ["/home/leiko/.m2:/root/.m2:rw"]
   }

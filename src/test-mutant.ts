@@ -47,11 +47,15 @@ export default function testMutant(docker: Docker, config: DefaultConfig, pom: m
       return docker.createContainer(options);
     })
     .then((container) => container.start())
-    .then((container) => container.wait())
-    .then((resp) => {
-      if (resp.StatusCode !== 0) {
-        throw resp;
-      }
+    .then((container) => {
+      return container.wait()
+        .then((resp: any) => {
+          if (resp.StatusCode !== 0) {
+            return container.remove()
+              .then(() => removeImage(docker, mutant))
+              .then(() => { throw resp; });
+          }
+        });
     });
 }
 
@@ -68,7 +72,8 @@ function buildImage(docker: Docker, mutant: Mutant) {
     .then((files) => tar.c({ cwd: mutant.dir, gzip: false, file: mutantTar }, files))
     .then(() => {
       return new Promise((resolve, reject) => {
-        docker.buildImage(mutantTar, { t: mutant.name }, (err, stream) => {
+        // TODO put 'nocache' as config options
+        docker.buildImage(mutantTar, { t: mutant.name, nocache: true }, (err, stream) => {
           if (err) {
             reject(err);
           } else {
@@ -104,4 +109,10 @@ function removeContainer(docker: Docker, mutant: Mutant, config: DefaultConfig) 
       }
       return null;
     });
+}
+
+function removeImage(docker: Docker, mutant: Mutant) {
+  return docker.getImage(mutant.name)
+    .remove()
+    .then(() => null, () => null);
 }
