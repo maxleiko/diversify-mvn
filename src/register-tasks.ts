@@ -22,7 +22,9 @@ export default function registerTask(engines: DockerEngine[], config: DefaultCon
         debug(`available Docker engine: ${engine}`);
         if (size() < config.mutantsLimit!) {
           // we have not reached our limit yet
+          debug('creating mutant...');
           const mutant = createMutant(config, groups);
+          debug(mutant);
           engine.available = false;
           testMutant(engine.docker, config, pom, mutant)
             .then(() => {
@@ -41,6 +43,7 @@ export default function registerTask(engines: DockerEngine[], config: DefaultCon
           // keep on running
           run();
         } else {
+          // mutant limit reached
           resolve();
         }
       } else {

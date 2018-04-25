@@ -11,6 +11,7 @@ export default function createGroups(deps: Dep[], versionsCount: number) {
       // pre-process mvnDeps to isolate deps in "groups"
       const groups: Groups = {};
       mvnDeps
+        .filter(({ versions }) => versions.length > 0)
         .forEach(({ g, a, versions }) => {
           let grp = groups[g];
           if (!grp) {
